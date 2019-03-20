@@ -18,7 +18,7 @@ namespace dotnetcore.urlshortener.InMemoryStore
         public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
         {
             var guid = Guid.NewGuid();
-            var shortId = guid.ToShortId();
+            var shortId = guid.ToShortBase64();
             shortUrl.Id = shortId;
             _database.Add(shortId, shortUrl);
             return shortUrl;

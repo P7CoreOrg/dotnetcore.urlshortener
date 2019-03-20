@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dotnetcore.urlshortener.generator\dotnetcore.urlshortener.generator.csproj" />
+    <ProjectReference Include="..\dotnetcore.urlshortener.InMemoryStore\dotnetcore.urlshortener.InMemoryStore.csproj" />
   </ItemGroup>
 
 </Project>

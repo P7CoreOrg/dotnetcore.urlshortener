@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 
@@ -6,24 +7,19 @@ namespace dotnetcore.urlshortener.generator
 {
     public static class GuidExtensions
     {
-        public static BigInteger ToBigInteger(this Guid guid)
+        public static string ToShortBase64(this Guid guid)
         {
-            return new BigInteger(guid.ToByteArray());
+            string enc = Convert.ToBase64String(guid.ToByteArray());
+            enc = enc.Replace("/", "_");
+            enc = enc.Replace("+", "-");
+            return enc.Substring(0, 22);
         }
-
-        public static string ToShortId(this Guid guid)
+        public static Guid FromShortBase64(this string encoded)
         {
-            var big = guid.ToBigInteger();
-            var encoded = ShortUrl.Encode(big);
-            return encoded;
-        }
-        public static Guid FromShortId(this string shortId)
-        {
-            var decoded = ShortUrl.Decode(shortId);
-            byte[] bytes = new byte[16];
-            decoded.ToByteArray().CopyTo(bytes, 0);
-            var guido = new Guid(bytes);
-            return guido;
+            encoded = encoded.Replace("_", "/");
+            encoded = encoded.Replace("-", "+");
+            byte[] buffer = Convert.FromBase64String(encoded + "==");
+            return new Guid(buffer);
         }
     }
 }
