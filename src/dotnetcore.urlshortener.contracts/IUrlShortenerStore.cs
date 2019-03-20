@@ -1,15 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace dotnetcore.urlshortener.contracts
 {
-    public class ShortUrl
-    {
-        public string LongUrl { get; set; }
-        public string Id { get; set; }
-        public DateTime Exiration { get; set; }
-    }
-    public interface IUrlShortenerStore
+    public interface IUrlShortenerStore: IUrlShortenerEventSource<ShortenerEventArgs>
     {
         Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl);
         Task<ShortUrl> GetShortUrlAsync(string id);

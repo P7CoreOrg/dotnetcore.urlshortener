@@ -10,10 +10,24 @@ namespace dotnetcore.urlshortener.InMemoryStore
 {
     public class InMemoryUrlShortenerStore : IUrlShortenerStore
     {
+        private EventSource<ShortenerEventArgs> _eventSource;
+        public event EventHandler ThresholdReached;
         private Dictionary<string, ShortUrl> _database;
 
+        void IUrlShortenerEventSource<ShortenerEventArgs>.AddListenter(EventHandler<ShortenerEventArgs> handler)
+        {
+            _eventSource.AddListenter(handler);
+        }
+
+        void IUrlShortenerEventSource<ShortenerEventArgs>.RemoveListenter(EventHandler<ShortenerEventArgs> handler)
+        {
+            _eventSource.RemoveListenter(handler);
+        }
+
+       
         public InMemoryUrlShortenerStore()
         {
+            _eventSource = new EventSource<ShortenerEventArgs>();
             _database = new Dictionary<string, ShortUrl>();
         }
         public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
@@ -27,6 +41,12 @@ namespace dotnetcore.urlshortener.InMemoryStore
             var shortId = guid.ToShortBase64();
             shortUrl.Id = shortId;
             _database.Add(shortId, shortUrl);
+            _eventSource.FireEvent(new ShortenerEventArgs()
+            {
+                ShortUrl = shortUrl,
+                EventType = ShortenerEventType.Upsert,
+                UtcDateTime = DateTime.UtcNow
+            });
             return shortUrl;
         }
 
@@ -40,7 +60,12 @@ namespace dotnetcore.urlshortener.InMemoryStore
                     _database.Remove(id);
                     return null;
                 }
-
+                _eventSource.FireEvent(new ShortenerEventArgs()
+                {
+                    ShortUrl = record,
+                    EventType = ShortenerEventType.Get,
+                    UtcDateTime = DateTime.UtcNow
+                });
                 return record;
             }
 
@@ -52,8 +77,16 @@ namespace dotnetcore.urlshortener.InMemoryStore
         {
             if (_database.ContainsKey(id))
             {
+                _eventSource.FireEvent(new ShortenerEventArgs()
+                {
+                    ShortUrl = _database[id],
+                    EventType = ShortenerEventType.Remove,
+                    UtcDateTime = DateTime.UtcNow
+                });
                 _database.Remove(id);
             }
         }
+
+       
     }
 }
