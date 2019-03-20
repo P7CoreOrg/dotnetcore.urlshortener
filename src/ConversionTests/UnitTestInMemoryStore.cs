@@ -19,7 +19,8 @@ namespace ConversionTests
             var store = new InMemoryUrlShortenerStore();
             var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
             {
-                LongUrl = url
+                LongUrl = url,
+                Exiration = DateTime.UtcNow.AddDays(1)
 
             });
             shortUrl.LongUrl.ShouldMatch(url);
@@ -36,7 +37,8 @@ namespace ConversionTests
             var store = new InMemoryUrlShortenerStore();
             var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
             {
-                LongUrl = url
+                LongUrl = url,
+                Exiration = DateTime.UtcNow.AddDays(1)
 
             });
             shortUrl.LongUrl.ShouldMatch(url);
@@ -50,5 +52,24 @@ namespace ConversionTests
             lookup = await store.GetShortUrlAsync(shortUrl.Id);
             lookup.ShouldBeNull();
         }
+
+        [TestMethod]
+        public async Task TestMethod_StoreUrl_Expiration()
+        {
+            var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
+            var store = new InMemoryUrlShortenerStore();
+            var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
+            {
+                LongUrl = url,
+                Exiration = DateTime.UtcNow
+
+            });
+            shortUrl.LongUrl.ShouldMatch(url);
+            shortUrl.Id.ShouldNotBeNullOrEmpty();
+
+            var lookup = await store.GetShortUrlAsync(shortUrl.Id);
+            lookup.ShouldBeNull();
+        }
+
     }
 }

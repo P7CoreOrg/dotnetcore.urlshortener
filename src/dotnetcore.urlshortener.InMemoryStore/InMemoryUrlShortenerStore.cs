@@ -18,6 +18,11 @@ namespace dotnetcore.urlshortener.InMemoryStore
         }
         public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
         {
+            Guard.ArgumentNotNull(nameof(shortUrl),shortUrl);
+            Guard.ArgumentNotNullOrEmpty(nameof(shortUrl.LongUrl),shortUrl.LongUrl);
+            Guard.ArgumentNotNull(nameof(shortUrl.Exiration), shortUrl.Exiration);
+
+
             var guid = Guid.NewGuid();
             var shortId = guid.ToShortBase64();
             shortUrl.Id = shortId;
@@ -29,7 +34,14 @@ namespace dotnetcore.urlshortener.InMemoryStore
         {
             if (_database.ContainsKey(id))
             {
-                return _database[id];
+                var record = _database[id];
+                if (record.Exiration <= DateTime.UtcNow)
+                {
+                    _database.Remove(id);
+                    return null;
+                }
+
+                return record;
             }
 
             return null;
