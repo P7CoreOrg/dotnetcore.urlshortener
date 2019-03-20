@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.438
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore.urlshortener.contracts", "dotnetcore.urlshortener.contracts\dotnetcore.urlshortener.contracts.csproj", "{791DA734-C173-40DD-A893-BC7474C8ABDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetcore.urlshortener.contracts", "dotnetcore.urlshortener.contracts\dotnetcore.urlshortener.contracts.csproj", "{791DA734-C173-40DD-A893-BC7474C8ABDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore.urlshortener.generator", "dotnetcore.urlshortener.generator\dotnetcore.urlshortener.generator.csproj", "{1699274F-B432-426D-B643-777E04C4CB61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{07548C38-5EDF-452F-8957-152A02A0C68E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversionTests", "ConversionTests\ConversionTests.csproj", "{F7F1C5BD-16B8-42B3-B943-84BC4B99FDFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,20 @@ Global
 		{791DA734-C173-40DD-A893-BC7474C8ABDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{791DA734-C173-40DD-A893-BC7474C8ABDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{791DA734-C173-40DD-A893-BC7474C8ABDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1699274F-B432-426D-B643-777E04C4CB61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1699274F-B432-426D-B643-777E04C4CB61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1699274F-B432-426D-B643-777E04C4CB61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1699274F-B432-426D-B643-777E04C4CB61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7F1C5BD-16B8-42B3-B943-84BC4B99FDFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7F1C5BD-16B8-42B3-B943-84BC4B99FDFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7F1C5BD-16B8-42B3-B943-84BC4B99FDFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7F1C5BD-16B8-42B3-B943-84BC4B99FDFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F7F1C5BD-16B8-42B3-B943-84BC4B99FDFE} = {07548C38-5EDF-452F-8957-152A02A0C68E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {209A67B4-F7E9-4EB2-ABEC-5E38DC61FCC1}
