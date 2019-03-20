@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Numerics;
 
-namespace dotnetcore.urlshortener.generator
+namespace dotnetcore.urlshortener.generator.Extensions
 {
     public static class GuidExtensions
     {

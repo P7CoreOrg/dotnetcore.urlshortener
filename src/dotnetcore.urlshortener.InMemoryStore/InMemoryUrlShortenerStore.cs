@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.generator;
+using dotnetcore.urlshortener.generator.Extensions;
 using ShortUrl = dotnetcore.urlshortener.contracts.ShortUrl;
 
 namespace dotnetcore.urlshortener.InMemoryStore

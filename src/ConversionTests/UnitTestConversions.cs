@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using dotnetcore.urlshortener.generator;
+using dotnetcore.urlshortener.generator.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shouldly;
 

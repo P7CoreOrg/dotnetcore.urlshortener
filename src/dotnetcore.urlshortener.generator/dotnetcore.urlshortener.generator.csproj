@@ -8,8 +8,4 @@
     <ProjectReference Include="..\dotnetcore.urlshortener.contracts\dotnetcore.urlshortener.contracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>
