@@ -8,16 +8,15 @@ namespace dotnetcore.urlshortener.InMemoryStore.Extensions
 {
     public static class AspNetCoreExtensions
     {
-        public static IServiceCollection AddInMemoryUrlShortenerConfiguration(this IServiceCollection services)
+        public static IServiceCollection AddInMemoryUrlShortenerExpiryOperationalStore(this IServiceCollection services)
         {
-            services.AddSingleton<IUrlShortenerConfiguration,InMemoryUrlShortenerConfiguration>(); // We must explicitly register Foo
+            services.AddSingleton<IUrlShortenerExpiryOperationalStore, InMemoryUrlShortenerExpiryOperationalStore>(); // We must explicitly register Foo
             return services;
         }
-        public static IServiceCollection AddInMemoryUrlShortenerStore(this IServiceCollection services)
+       
+        public static IServiceCollection AddInMemoryUrlShortenerOperationalStore(this IServiceCollection services)
         {
-            services.AddSingleton<InMemoryUrlShortenerStore>(); // We must explicitly register Foo
-            services.AddSingleton<IUrlShortenerStore>(x => x.GetRequiredService<InMemoryUrlShortenerStore>()); // Forward requests to Foo
-            services.AddSingleton<IUrlShortenerEventSource<ShortenerEventArgs>>(x => x.GetRequiredService<InMemoryUrlShortenerStore>()); // Forward requests to Foo
+            services.AddSingleton<IUrlShortenerOperationalStore, InMemoryUrlShortenerOperationalStore>(); // We must explicitly register Foo
             return services;
         }
     }

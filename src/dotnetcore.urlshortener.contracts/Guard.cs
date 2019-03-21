@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 
-namespace dotnetcore.urlshortener.InMemoryStore
+namespace dotnetcore.urlshortener.contracts
 {
     public static class Guard
     {

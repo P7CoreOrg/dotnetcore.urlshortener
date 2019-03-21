@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using dotnetcore.urlshortener.contracts;
-using dotnetcore.urlshortener.generator;
-using dotnetcore.urlshortener.generator.Extensions;
-using ShortUrl = dotnetcore.urlshortener.contracts.ShortUrl;
 
-namespace dotnetcore.urlshortener.InMemoryStore
+namespace dotnetcore.urlshortener.contracts
 {
-    public class InMemoryUrlShortenerStore : IUrlShortenerStore
+    public class UrlShortenerService : IUrlShortenerService
     {
         private EventSource<ShortenerEventArgs> _eventSource;
-        public event EventHandler ThresholdReached;
-        private Dictionary<string, ShortUrl> _database;
-        private IUrlShortenerConfiguration _urlShortenerConfiguration;
+        private IUrlShortenerOperationalStore _urlShortenerOperationalStore;
+        private IUrlShortenerExpiryOperationalStore _urlShortenerExpiryOperationalStore;
 
         void IUrlShortenerEventSource<ShortenerEventArgs>.AddListenter(EventHandler<ShortenerEventArgs> handler)
         {
@@ -27,24 +21,21 @@ namespace dotnetcore.urlshortener.InMemoryStore
         }
 
        
-        public InMemoryUrlShortenerStore(IUrlShortenerConfiguration urlShortenerConfiguration)
+        public UrlShortenerService(
+            IUrlShortenerOperationalStore urlShortenerOperationalStore,
+            IUrlShortenerExpiryOperationalStore urlShortenerExpiryOperationalStore)
         {
-            _urlShortenerConfiguration = urlShortenerConfiguration;
+            _urlShortenerOperationalStore = urlShortenerOperationalStore;
+            _urlShortenerExpiryOperationalStore = urlShortenerExpiryOperationalStore;
             _eventSource = new EventSource<ShortenerEventArgs>();
-            _database = new Dictionary<string, ShortUrl>();
         }
         public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
         {
-            Guard.ArgumentNotNull(nameof(shortUrl),shortUrl);
-            Guard.ArgumentNotNullOrEmpty(nameof(shortUrl.LongUrl),shortUrl.LongUrl);
-            Guard.ArgumentNotNull(nameof(shortUrl.Exiration), shortUrl.Exiration);
-
-            if (string.IsNullOrEmpty(shortUrl.ExpiredRedirectKey))
+            Guard.ArgumentNotNull(nameof(shortUrl), shortUrl);
+            var expiredRedirectKey = "0000";
+            if (!string.IsNullOrEmpty(shortUrl.ExpiredRedirectKey))
             {
-                shortUrl.ExpiredRedirectKey = "0000";
-            }
-            else
-            {
+               
                 Guard.ArguementEvalutate(nameof(shortUrl.ExpiredRedirectKey),
                     (() =>
                     {
@@ -65,19 +56,19 @@ namespace dotnetcore.urlshortener.InMemoryStore
                         }
                         return (true, null);
                     }));
+                expiredRedirectKey = shortUrl.ExpiredRedirectKey;
             }
 
-            var guid = Guid.NewGuid();
-            var shortId = guid.ToShortBase64();
-            shortUrl.Id = $"{shortUrl.ExpiredRedirectKey}{shortId}";
-            _database.Add(shortId, shortUrl);
+            var record = await _urlShortenerOperationalStore.UpsertShortUrlAsync(shortUrl);
+            record.Id = $"{expiredRedirectKey}{record.Id}";
+            record.ExpiredRedirectKey = expiredRedirectKey;
             _eventSource.FireEvent(new ShortenerEventArgs()
             {
-                ShortUrl = shortUrl,
+                ShortUrl = record,
                 EventType = ShortenerEventType.Upsert,
                 UtcDateTime = DateTime.UtcNow
             });
-            return shortUrl;
+            return record;
         }
 
         public async Task<ShortUrl> GetShortUrlAsync(string id)
@@ -94,41 +85,35 @@ namespace dotnetcore.urlshortener.InMemoryStore
                 }));
             var expireRedirectKey = id.Substring(0, 4);
             var key = id.Substring(4);
-            if (_database.ContainsKey(key))
+            var record = await _urlShortenerOperationalStore.GetShortUrlAsync(key);
+            if (record != null)
             {
-                var record = _database[key];
-                if (record.Exiration <= DateTime.UtcNow)
+                _eventSource.FireEvent(new ShortenerEventArgs()
                 {
-                    _database.Remove(id);
-                }
-                else
-                {
-                    _eventSource.FireEvent(new ShortenerEventArgs()
-                    {
-                        ShortUrl = record,
-                        EventType = ShortenerEventType.Get,
-                        UtcDateTime = DateTime.UtcNow
-                    });
-                    return record;
-                }
+                    ShortUrl = record,
+                    EventType = ShortenerEventType.Get,
+                    UtcDateTime = DateTime.UtcNow
+                });
+                return record;
             }
 
-            var expirationRedirectRecord = await _urlShortenerConfiguration.GetExpirationRedirectRecordAsync(expireRedirectKey);
-            var shortUrl = new ShortUrl
+            var expirationRedirectRecord = await _urlShortenerExpiryOperationalStore.GetExpirationRedirectRecordAsync(expireRedirectKey);
+            record = new ShortUrl
             {
-                LongUrl = expirationRedirectRecord.ExpiredRedirectUrl,Id = id,ExpiredRedirectKey = expireRedirectKey
+                LongUrlType = LongUrlType.ExpiryRedirect,
+                LongUrl = expirationRedirectRecord.ExpiredRedirectUrl,
+                Id = id,
+                ExpiredRedirectKey = expireRedirectKey
             };
             _eventSource.FireEvent(new ShortenerEventArgs()
             {
-                ShortUrl = shortUrl,
-                ExpirationRedirectRecord = expirationRedirectRecord,
+                ShortUrl = record,
                 EventType = ShortenerEventType.Expired,
                 UtcDateTime = DateTime.UtcNow
             });
 
+            return record;
 
-            return shortUrl;
-          
         }
 
         public async Task RemoveShortUrlAsync(string id)
@@ -143,20 +128,19 @@ namespace dotnetcore.urlshortener.InMemoryStore
 
                     return (true, null);
                 }));
-            var expireRedirectKey = id.Substring(0, 4);
+           
             var key = id.Substring(4);
-            if (_database.ContainsKey(key))
+            var original = await _urlShortenerOperationalStore.GetShortUrlAsync(key);
+            if (original != null)
             {
                 _eventSource.FireEvent(new ShortenerEventArgs()
                 {
-                    ShortUrl = _database[key],
+                    ShortUrl = original,
                     EventType = ShortenerEventType.Remove,
                     UtcDateTime = DateTime.UtcNow
                 });
-                _database.Remove(key);
+                await _urlShortenerOperationalStore.RemoveShortUrlAsync(key);
             }
         }
-
-       
     }
 }

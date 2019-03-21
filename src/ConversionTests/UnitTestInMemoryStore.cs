@@ -35,7 +35,7 @@ namespace ConversionTests
         [TestMethod]
         public async Task TestMethod_StoreUrl_AddRemoveEventHandler()
         {
-            var store = _testServerFixture.GetService<IUrlShortenerStore>();
+            var store = _testServerFixture.GetService<IUrlShortenerService>();
             var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
            
             ShortenerEventArgs evt = null;
@@ -68,7 +68,7 @@ namespace ConversionTests
         public async Task TestMethod_StoreUrl_GetUrl()
         {
             var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
-            var store = _testServerFixture.GetService<IUrlShortenerStore>();
+            var store = _testServerFixture.GetService<IUrlShortenerService>();
             ShortenerEventArgs evt = null;
             var myHandler = new MyHandler();
             store.AddListenter(myHandler.OnEvent);
@@ -102,7 +102,7 @@ namespace ConversionTests
         public async Task TestMethod_StoreUrl_RemoveUrl()
         {
             var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
-            var store = _testServerFixture.GetService<IUrlShortenerStore>();
+            var store = _testServerFixture.GetService<IUrlShortenerService>();
             var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
             {
                 LongUrl = url,
@@ -128,7 +128,7 @@ namespace ConversionTests
         public async Task TestMethod_StoreUrl_Expiration()
         {
             var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
-            var store = _testServerFixture.GetService<IUrlShortenerStore>();
+            var store = _testServerFixture.GetService<IUrlShortenerService>();
             var myHandler = new MyHandler();
             store.AddListenter(myHandler.OnEvent);
             var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()

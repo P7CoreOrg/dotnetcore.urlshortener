@@ -2,7 +2,7 @@
 
 namespace dotnetcore.urlshortener.contracts
 {
-    public interface IUrlShortenerConfiguration
+    public interface IUrlShortenerExpiryOperationalStore
     {
         Task<ExpirationRedirectRecord> GetExpirationRedirectRecordAsync(string key);
     }

@@ -6,19 +6,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace dotnetcore.urlshortener.InMemoryStore
 {
-    public class InMemoryUrlShortenerConfigurationModel
-    {
-        public List<ExpirationRedirectRecord> Records { get; set; }
-        public string DefaultExpiredRedirectKey { get; set; }
-    }
-    public class InMemoryUrlShortenerConfiguration : IUrlShortenerConfiguration
+    public class InMemoryUrlShortenerExpiryOperationalStore : IUrlShortenerExpiryOperationalStore
     {
         private Dictionary<string, ExpirationRedirectRecord> _database;
        private string DefaultExpiredRedirectKey { get; set; }
-        public InMemoryUrlShortenerConfiguration(IConfiguration configuration )
+        public InMemoryUrlShortenerExpiryOperationalStore(IConfiguration configuration )
         {
             _database = new Dictionary<string, ExpirationRedirectRecord>();
-            var section = configuration.GetSection("inMemoryUrlShortenerConfiguration");
+            var section = configuration.GetSection("InMemoryUrlShortenerExpiryOperationalStore");
             var model = new InMemoryUrlShortenerConfigurationModel();
            
             section.Bind(model);
