@@ -1,10 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace dotnetcore.urlshortener.InMemoryStore
 {
     public static class Guard
     {
+
+        public static void ArguementEvalutate(string argumentName, Func<(bool success,string message)> condition)
+        {
+            var eval = condition.Invoke();
+            if (!eval.success)
+            {
+                throw new ArgumentException(eval.message, argumentName);
+            }
+        }
         public static void ArgumentNotNull(string argumentName, object value)
         {
             if (value == null)

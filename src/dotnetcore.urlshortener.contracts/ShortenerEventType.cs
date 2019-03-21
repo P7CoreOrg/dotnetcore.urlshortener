@@ -2,6 +2,7 @@
 {
     public enum ShortenerEventType
     {
-        Upsert, Remove, Get
+        Upsert, Remove, Get,
+        Expired
     }
 }

@@ -10,6 +10,4 @@ namespace dotnetcore.urlshortener.contracts
         void RemoveListenter(EventHandler<T> handler);
 
     }
-
-   
 }
