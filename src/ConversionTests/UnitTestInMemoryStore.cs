@@ -9,10 +9,53 @@ using ShortUrl = dotnetcore.urlshortener.contracts.ShortUrl;
 
 namespace ConversionTests
 {
+    public class MyHandler
+    {
+        public ShortenerEventArgs Evt { get; set; }
+        public MyHandler()
+        {
+        }
+
+        public void OnEvent(object sender, ShortenerEventArgs e)
+        {
+            Evt = e;
+        }
+    }
     [TestClass]
     public class UnitTestInMemoryStore
     {
-       
+        [TestMethod]
+        public async Task TestMethod_StoreUrl_AddRemoveEventHandler()
+        {
+            var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
+            var store = new InMemoryUrlShortenerStore();
+            var eventSource = (IUrlShortenerEventSource<ShortenerEventArgs>)store;
+            ShortenerEventArgs evt = null;
+            var myHandler = new MyHandler();
+            eventSource.AddListenter(myHandler.OnEvent);
+            var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
+            {
+                LongUrl = url,
+                Exiration = DateTime.UtcNow.AddDays(1)
+
+            });
+            myHandler.Evt.ShouldNotBeNull();
+            myHandler.Evt.EventType.ShouldBe(ShortenerEventType.Upsert);
+            myHandler.Evt.ShortUrl.ShouldNotBeNull();
+            myHandler.Evt.ShortUrl.LongUrl.ShouldMatch(url);
+            myHandler.Evt.ShortUrl.Id.ShouldNotBeNullOrEmpty();
+
+            shortUrl.LongUrl.ShouldMatch(url);
+            shortUrl.Id.ShouldNotBeNullOrEmpty();
+
+            myHandler.Evt = null;
+            eventSource.RemoveListenter(myHandler.OnEvent);
+
+            var lookup = await store.GetShortUrlAsync(shortUrl.Id);
+            myHandler.Evt.ShouldBeNull();
+        }
+
+
         [TestMethod]
         public async Task TestMethod_StoreUrl_GetUrl()
         {
@@ -20,29 +63,30 @@ namespace ConversionTests
             var store = new InMemoryUrlShortenerStore();
             var eventSource = (IUrlShortenerEventSource<ShortenerEventArgs>) store;
             ShortenerEventArgs evt = null;
-            eventSource.AddListenter((object sender, ShortenerEventArgs e) => { evt = e; });
+            var myHandler = new MyHandler();
+            eventSource.AddListenter(myHandler.OnEvent);
             var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
             {
                 LongUrl = url,
                 Exiration = DateTime.UtcNow.AddDays(1)
 
             });
-            evt.ShouldNotBeNull();
-            evt.EventType.ShouldBe(ShortenerEventType.Upsert);
-            evt.ShortUrl.ShouldNotBeNull();
-            evt.ShortUrl.LongUrl.ShouldMatch(url);
-            evt.ShortUrl.Id.ShouldNotBeNullOrEmpty();
+            myHandler.Evt.ShouldNotBeNull();
+            myHandler.Evt.EventType.ShouldBe(ShortenerEventType.Upsert);
+            myHandler.Evt.ShortUrl.ShouldNotBeNull();
+            myHandler.Evt.ShortUrl.LongUrl.ShouldMatch(url);
+            myHandler.Evt.ShortUrl.Id.ShouldNotBeNullOrEmpty();
 
             shortUrl.LongUrl.ShouldMatch(url);
             shortUrl.Id.ShouldNotBeNullOrEmpty();
 
-            evt = null;
+            myHandler.Evt = null;
             var lookup = await store.GetShortUrlAsync(shortUrl.Id);
-            evt.ShouldNotBeNull();
-            evt.EventType.ShouldBe(ShortenerEventType.Get);
-            evt.ShortUrl.ShouldNotBeNull();
-            evt.ShortUrl.LongUrl.ShouldMatch(url);
-            evt.ShortUrl.Id.ShouldMatch(shortUrl.Id);
+            myHandler.Evt.ShouldNotBeNull();
+            myHandler.Evt.EventType.ShouldBe(ShortenerEventType.Get);
+            myHandler.Evt.ShortUrl.ShouldNotBeNull();
+            myHandler.Evt.ShortUrl.LongUrl.ShouldMatch(url);
+            myHandler.Evt.ShortUrl.Id.ShouldMatch(shortUrl.Id);
 
             shortUrl.Id.ShouldMatch(lookup.Id);
             shortUrl.LongUrl.ShouldMatch(lookup.LongUrl);
