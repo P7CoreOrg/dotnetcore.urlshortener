@@ -118,7 +118,10 @@ namespace ConversionTests
 
             await store.RemoveShortUrlAsync(shortUrl.Id);
             lookup = await store.GetShortUrlAsync(shortUrl.Id);
-            lookup.ShouldBeNull();
+            lookup.ShouldNotBeNull();
+
+            shortUrl.Id.ShouldMatch(lookup.Id);
+            shortUrl.LongUrl.ShouldNotMatch(lookup.LongUrl);
         }
 
         [TestMethod]
@@ -126,6 +129,8 @@ namespace ConversionTests
         {
             var url = "https://github.com/P7CoreOrg/dotnetcore.urlshortener/tree/dev";
             var store = _testServerFixture.GetService<IUrlShortenerStore>();
+            var myHandler = new MyHandler();
+            store.AddListenter(myHandler.OnEvent);
             var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
             {
                 LongUrl = url,
@@ -136,7 +141,18 @@ namespace ConversionTests
             shortUrl.Id.ShouldNotBeNullOrEmpty();
 
             var lookup = await store.GetShortUrlAsync(shortUrl.Id);
-            lookup.ShouldBeNull();
+
+            myHandler.Evt.ShouldNotBeNull();
+            myHandler.Evt.EventType.ShouldBe(ShortenerEventType.Expired);
+            myHandler.Evt.ShortUrl.ShouldNotBeNull();
+            myHandler.Evt.ShortUrl.LongUrl.ShouldNotMatch(url);
+            myHandler.Evt.ShortUrl.Id.ShouldMatch(shortUrl.Id);
+
+
+            lookup.ShouldNotBeNull();
+
+            shortUrl.Id.ShouldMatch(lookup.Id);
+            shortUrl.LongUrl.ShouldNotMatch(lookup.LongUrl);
         }
 
     }

@@ -9,19 +9,6 @@ using ShortUrl = dotnetcore.urlshortener.contracts.ShortUrl;
 
 namespace dotnetcore.urlshortener.InMemoryStore
 {
-    public class InMemoryUrlShortenerConfiguration : IUrlShortenerConfiguration
-    {
-        private Dictionary<string, ExpirationRedirectRecord> _database;
-
-        public InMemoryUrlShortenerConfiguration()
-        {
-            _database = new Dictionary<string, ExpirationRedirectRecord>();
-        }
-        public async Task<ExpirationRedirectRecord> GetExpirationRedirectRecordAsync(string key)
-        {
-            throw new NotImplementedException();
-        }
-    }
     public class InMemoryUrlShortenerStore : IUrlShortenerStore
     {
         private EventSource<ShortenerEventArgs> _eventSource;
@@ -40,7 +27,7 @@ namespace dotnetcore.urlshortener.InMemoryStore
         }
 
        
-        public InMemoryUrlShortenerStore(IUrlShortenerConfiguration urlShortenerConfiguration = null)
+        public InMemoryUrlShortenerStore(IUrlShortenerConfiguration urlShortenerConfiguration)
         {
             _urlShortenerConfiguration = urlShortenerConfiguration;
             _eventSource = new EventSource<ShortenerEventArgs>();
@@ -113,25 +100,34 @@ namespace dotnetcore.urlshortener.InMemoryStore
                 if (record.Exiration <= DateTime.UtcNow)
                 {
                     _database.Remove(id);
+                }
+                else
+                {
                     _eventSource.FireEvent(new ShortenerEventArgs()
                     {
                         ShortUrl = record,
-                        EventType = ShortenerEventType.Expired,
+                        EventType = ShortenerEventType.Get,
                         UtcDateTime = DateTime.UtcNow
                     });
-                    //TODO: lookup redirect key and send that back
-                    return null;
+                    return record;
                 }
-                _eventSource.FireEvent(new ShortenerEventArgs()
-                {
-                    ShortUrl = record,
-                    EventType = ShortenerEventType.Get,
-                    UtcDateTime = DateTime.UtcNow
-                });
-                return record;
             }
 
-            return null;
+            var expirationRedirectRecord = await _urlShortenerConfiguration.GetExpirationRedirectRecordAsync(expireRedirectKey);
+            var shortUrl = new ShortUrl
+            {
+                LongUrl = expirationRedirectRecord.ExpiredRedirectUrl,Id = id,ExpiredRedirectKey = expireRedirectKey
+            };
+            _eventSource.FireEvent(new ShortenerEventArgs()
+            {
+                ShortUrl = shortUrl,
+                ExpirationRedirectRecord = expirationRedirectRecord,
+                EventType = ShortenerEventType.Expired,
+                UtcDateTime = DateTime.UtcNow
+            });
+
+
+            return shortUrl;
           
         }
 
