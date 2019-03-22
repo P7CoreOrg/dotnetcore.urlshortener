@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.Extensions;
+using dotnetcore.urlshortener.generator.Extensions;
 using dotnetcore.urlshortener.InMemoryStore.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,7 @@ namespace UrlShortenerHost
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddUrlShortenerService();
+            services.AddGuidUrlShortenerAlgorithm();
             services.AddInMemoryUrlShortenerExpiryOperationalStore();
             services.AddInMemoryUrlShortenerOperationalStore();
         }

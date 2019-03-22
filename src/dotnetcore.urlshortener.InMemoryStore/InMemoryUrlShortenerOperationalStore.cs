@@ -11,9 +11,11 @@ namespace dotnetcore.urlshortener.InMemoryStore
     public class InMemoryUrlShortenerOperationalStore : IUrlShortenerOperationalStore
     {
         private Dictionary<string, ShortUrl> _database;
+        private IUrlShortenerAlgorithm _urlShortenerAlgorithm;
 
-        public InMemoryUrlShortenerOperationalStore()
+        public InMemoryUrlShortenerOperationalStore(IUrlShortenerAlgorithm urlShortenerAlgorithm)
         {
+            _urlShortenerAlgorithm = urlShortenerAlgorithm;
             _database = new Dictionary<string, ShortUrl>();
         }
         public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
@@ -24,8 +26,7 @@ namespace dotnetcore.urlshortener.InMemoryStore
 
             shortUrl.LongUrlType = LongUrlType.Original;
 
-            var guid = Guid.NewGuid();
-            shortUrl.Id = guid.ToShortBase64();
+            shortUrl.Id = await _urlShortenerAlgorithm.GenerateUniqueId();
             _database.Add(shortUrl.Id, shortUrl);
             return shortUrl;
         }
