@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dotnetcore.urlshortener.contracts
+namespace dotnetcore.urlshortener
 {
     public class EventSource<T> where T : class
     {

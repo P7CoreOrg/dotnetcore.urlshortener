@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\dotnetcore.urlshortener.contracts\dotnetcore.urlshortener.contracts.csproj" />
     <ProjectReference Include="..\dotnetcore.urlshortener.generator\dotnetcore.urlshortener.generator.csproj" />
+    <ProjectReference Include="..\dotnetcore.urlshortener.Utils\dotnetcore.urlshortener.Utils.csproj" />
   </ItemGroup>
 
 </Project>

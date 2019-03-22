@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using dotnetcore.urlshortener.contracts.Extensions;
+using dotnetcore.urlshortener.Extensions;
 using dotnetcore.urlshortener.InMemoryStore.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

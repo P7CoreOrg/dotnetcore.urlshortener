@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.generator.Extensions;
+using dotnetcore.urlshortener.Utils;
 
 namespace dotnetcore.urlshortener.InMemoryStore
 {

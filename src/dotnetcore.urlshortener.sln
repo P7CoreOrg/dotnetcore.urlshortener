@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore.urlshortener.InM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlShortenerHost", "UrlShortenerHost\UrlShortenerHost.csproj", "{985F49A4-D619-4DA9-B19A-405328C6CC96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore.urlshortener", "dotnetcore.urlshortener\dotnetcore.urlshortener.csproj", "{483A3A81-9274-48FF-85BF-AAA217D9FCC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore.urlshortener.Utils", "dotnetcore.urlshortener.Utils\dotnetcore.urlshortener.Utils.csproj", "{E8C49C58-1A06-4AEB-9FFD-3A5432699610}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,14 @@ Global
 		{985F49A4-D619-4DA9-B19A-405328C6CC96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{985F49A4-D619-4DA9-B19A-405328C6CC96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{985F49A4-D619-4DA9-B19A-405328C6CC96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{483A3A81-9274-48FF-85BF-AAA217D9FCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{483A3A81-9274-48FF-85BF-AAA217D9FCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{483A3A81-9274-48FF-85BF-AAA217D9FCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{483A3A81-9274-48FF-85BF-AAA217D9FCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8C49C58-1A06-4AEB-9FFD-3A5432699610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C49C58-1A06-4AEB-9FFD-3A5432699610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C49C58-1A06-4AEB-9FFD-3A5432699610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C49C58-1A06-4AEB-9FFD-3A5432699610}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using dotnetcore.urlshortener.contracts;
+using dotnetcore.urlshortener.Utils;
 
-namespace dotnetcore.urlshortener.contracts
+namespace dotnetcore.urlshortener
 {
     public class UrlShortenerService : IUrlShortenerService
     {

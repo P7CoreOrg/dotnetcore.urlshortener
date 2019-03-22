@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using dotnetcore.urlshortener.contracts;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace dotnetcore.urlshortener.contracts.Extensions
+namespace dotnetcore.urlshortener.Extensions
 {
     public static class AspNetCoreExtensions
     {

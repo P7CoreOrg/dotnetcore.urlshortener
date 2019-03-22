@@ -9,8 +9,4 @@ namespace dotnetcore.urlshortener.contracts
         Task RemoveShortUrlAsync(string id);
     }
 
-    public interface IUrlExpiryOperationalStore
-    {
-
-    }
 }
