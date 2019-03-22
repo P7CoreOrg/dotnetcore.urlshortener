@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using dotnetcore.urlshortener.Extensions;
+using dotnetcore.urlshortener.InMemoryStore.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +33,9 @@ namespace UrlShortenerHost
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            services.AddUrlShortenerService();
+            services.AddInMemoryUrlShortenerExpiryOperationalStore();
+            services.AddInMemoryUrlShortenerOperationalStore();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
